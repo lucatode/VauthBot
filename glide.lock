@@ -1,0 +1,26 @@
+hash: aa5706e2c7335c1ad61e8fc5d28fc0c0097ea4ef0f4a292ed8a59e9eaeca5197
+updated: 2018-05-29T23:37:38.673888+02:00
+imports:
+- name: github.com/gorilla/context
+  version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
+- name: github.com/gorilla/mux
+  version: e3702bed27f0d39777b0b37b664b6280e8ef8fbf
+- name: github.com/Masterminds/cookoo
+  version: 78aa11ce75e257c51be7ea945edb84cf19c4a6de
+- name: github.com/technoweenie/multipartstreamer
+  version: a90a01d73ae432e2611d178c18367fbaa13e0154
+- name: gopkg.in/telegram-bot-api.v4
+  version: 0e0af0c480ea98e982d5f4d45fb39577c6ab1e3e
+testImports:
+- name: github.com/davecgh/go-spew
+  version: 8991bc29aa16c548c550c7ff78260e27b9ab7c73
+  subpackages:
+  - spew
+- name: github.com/pmezard/go-difflib
+  version: 792786c7400a136282c1664665ae0a8db921c6c2
+  subpackages:
+  - difflib
+- name: github.com/stretchr/testify
+  version: 12b6f73e6084dad08a7c6e575284b177ecafbc71
+  subpackages:
+  - assert

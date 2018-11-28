@@ -7,10 +7,13 @@ import (
 
 func TestExactMatchDecoratedWithCommand(t *testing.T) {
 
-	replacer := RandomRangeNumberReplacer{"%n"}
+	replacer := RandomRangeNumberReplacer{100, "%n", randomValue}
 
 	stringOutput := replacer.ReplaceIn("This is a text and this (%n) should be replaced with a random number")
-	assert.Equal(t, "This is a text and this 23 should be replaced with a random number", stringOutput, "")
+	assert.Equal(t, "This is a text and this (23) should be replaced with a random number", stringOutput, "")
 
 }
 
+func randomValue(max int) string {
+	return "23"
+}

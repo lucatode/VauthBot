@@ -121,7 +121,7 @@ func main() {
 
 		placeholder := "%randomNumber"
 		if strings.Contains(text, placeholder) {
-			rnd := replacer.RandomRangeNumberReplacer{Placeholder: placeholder}
+			rnd := replacer.GetRandomRangeNumberReplacer(1000, placeholder, replacer.GenerateRandomNumeber)
 			text = rnd.ReplaceIn(text)
 		}
 		//if ok {

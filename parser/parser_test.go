@@ -15,6 +15,7 @@ func MockExactMatchDictionary() map[string]string {
 
 func MockWordMatcherDictionary() map[string]string {
 	return map[string]string{
+		"ab ba": "Found ab ba",
 		"abba": "Found abba",
 		"bccb": "Found bccb",
 		"cddc": "Found cddc",
@@ -75,7 +76,11 @@ func TestCheckStringMatch(t *testing.T) {
 }
 
 func TestContainsWordMatch(t *testing.T) {
-	matchOutput, stringOutput := NewContainsWordMatcher(MockWordMatcherDictionary()).ParseMessage(B.WithText("abba abab ababa").Build())
+	matchOutput, stringOutput := NewContainsWordMatcher(MockWordMatcherDictionary()).ParseMessage(B.WithText("ab ba abab").Build())
+	assert.Equal(t, "Found ab ba", stringOutput, "")
+	assert.Equal(t, matchOutput, true, "")
+
+	matchOutput, stringOutput = NewContainsWordMatcher(MockWordMatcherDictionary()).ParseMessage(B.WithText("abba abab ababa").Build())
 	assert.Equal(t, "Found abba", stringOutput, "")
 	assert.Equal(t, matchOutput, true, "")
 
@@ -84,6 +89,10 @@ func TestContainsWordMatch(t *testing.T) {
 	assert.Equal(t, matchOutput, true, "")
 
 	matchOutput, stringOutput = NewContainsWordMatcher(MockWordMatcherDictionary()).ParseMessage(B.WithText("cddc").Build())
+	assert.Equal(t, "Found cddc", stringOutput, "")
+	assert.Equal(t, matchOutput, true, "")
+
+	matchOutput, stringOutput = NewContainsWordMatcher(MockWordMatcherDictionary()).ParseMessage(B.WithText("cccc").Build())
 	assert.Equal(t, "", stringOutput, "")
 	assert.Equal(t, matchOutput, false, "")
 }

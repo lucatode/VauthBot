@@ -34,13 +34,9 @@ type ContainsWordMatcher struct {
 
 func (cwm ContainsWordMatcher) ParseMessage(message Message) (bool, string) {
 	inputString := message.Text
-	if strings.Contains(inputString, " ") {
-		splittedMessage := strings.Split(inputString, " ")
-		for _, word := range splittedMessage {
-			val, ok := cwm.containsWordDict[word]
-			if ok {
-				return ok, val
-			}
+	for k, v := range cwm.containsWordDict {
+		if strings.Contains(inputString, k) {
+			return true, v
 		}
 	}
 	return cwm.delegate(message)

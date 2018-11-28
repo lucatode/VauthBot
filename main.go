@@ -1,17 +1,17 @@
 package main
 
 import (
-	"condorbot/dispatcher"
-	"condorbot/initializer"
-	"condorbot/subscriber"
+	"vauthbot/dispatcher"
+	"vauthbot/initializer"
+	"vauthbot/subscriber"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
 
-	"condorbot/logger"
-	"condorbot/parser"
-	"condorbot/repositories"
+	"vauthbot/logger"
+	"vauthbot/parser"
+	"vauthbot/repositories"
 	"gopkg.in/telegram-bot-api.v4"
 	"strings"
 	"io/ioutil"

@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"condorbot/logger"
+	"vauthbot/logger"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"

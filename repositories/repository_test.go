@@ -4,7 +4,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"net/http"
-	"condorbot/logger"
+	"vauthbot/logger"
 )
 
 

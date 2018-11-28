@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"condorbot/dispatcher"
+	"vauthbot/dispatcher"
 	"strings"
 )
 

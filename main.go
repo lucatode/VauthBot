@@ -19,6 +19,66 @@ import (
 	"vauthbot/replacer"
 )
 
+func main() {
+	//INIT
+	init := Init()
+	logger := CreateLogger(init)
+	repo := CreateRepository(logger)
+
+	m := repo.GetWordMatchMap(init.GetFireBaseResponsesUrl())
+	for _, v := range m {
+		logger.Log("MAIN_INIT","request: "+v)
+	}
+
+	p := BuildParser(init, m, repo)
+
+	// SETUP BOT
+	bot, err := tgbotapi.NewBotAPI(init.GetApiToken())
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// BOT CONFIG
+	res, errWebhook := bot.SetWebhook(tgbotapi.NewWebhook(init.GetServerUrl() + bot.Token))
+	if errWebhook != nil {
+		log.Fatal(errWebhook)
+	}
+	logger.Log("MAIN", res.Description)
+
+	// SETUP INPUT ROUTES
+	port := os.Getenv("PORT")
+	logger.Log("MAIN", "port: "+port)
+	go http.ListenAndServe(":"+port, nil)
+	http.HandleFunc("/notify/", NotifyHandler(init, bot))
+	http.HandleFunc("/restart/", RestartParser(init, p, repo))
+
+	// FETCH MESSAGES
+	updates := bot.ListenForWebhook("/" + bot.Token)
+	for update := range updates {
+		if update.Message == nil {
+			continue
+		}
+		ok, text := p.ParseMessage(BuildMessage(update.Message))
+
+		placeholder := "%randomNumber"
+		if strings.Contains(text, placeholder) {
+			rnd := replacer.GetRandomRangeNumberReplacer(1000, placeholder, replacer.GenerateRandomNumeber)
+			text = rnd.ReplaceIn(text)
+		}
+
+		if ok {
+			msg := tgbotapi.NewMessage(update.Message.Chat.ID, text)
+			bot.Send(msg)
+		}
+	}
+}
+func RestartParser(init initializer.Initializer, p parser.Parser, repo repositories.FireBaseRepository) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		m := repo.GetWordMatchMap(init.GetFireBaseResponsesUrl())
+		p = BuildParser(init, m, repo)
+	}
+}
+
 func Init() initializer.Initializer {
 	return initializer.NewInitializer(initializer.NewEnvReader())
 }
@@ -31,14 +91,24 @@ func CreateRepository(logger logger.FirebaseLogger) repositories.FireBaseReposit
 	client := http.Client{}
 	return repositories.FireBaseRepository{client.Get, logger}
 }
-func BuildMessage(message *tgbotapi.Message) parser.Message {
-	return parser.Message{message.Text, strconv.FormatInt(message.Chat.ID, 10)}
-}
+
 func BuildCommandDispatcher(url string) dispatcher.Dispatcher {
 	return dispatcher.CommandDispatcher{map[string]func([]string, string) string{
 		"#subscribe": func(split []string, chatId string) string { return subscriber.AddSubscription(url, split, chatId) },
 	}}
 }
+func BuildParser(init initializer.Initializer, m map[string]string, repo repositories.FireBaseRepository) parser.Parser {
+	return parser.CommandsDecorated(
+		BuildCommandDispatcher(init.GetFireBaseSubscriptionsUrl()),
+		parser.ContainsWordDecorated(m,
+			parser.NewExactMatcher(
+				repo.GetExactMatchMap(init.GetFireBaseResponsesUrl()))))
+}
+
+func BuildMessage(message *tgbotapi.Message) parser.Message {
+	return parser.Message{message.Text, strconv.FormatInt(message.Chat.ID, 10)}
+}
+
 func NotifyHandler(init initializer.Initializer, bot *tgbotapi.BotAPI) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		channel := strings.TrimPrefix(r.URL.Path, "/notify/")
@@ -74,66 +144,4 @@ func NotifyHandler(init initializer.Initializer, bot *tgbotapi.BotAPI) func(w ht
 	}
 }
 
-func main() {
-	//INIT
-	init := Init()
-	logger := CreateLogger(init)
-	repo := CreateRepository(logger)
-
-	m := repo.GetWordMatchMap(init.GetFireBaseResponsesUrl())
-	for _, v := range m {
-		logger.Log("MAIN_INIT","request: "+v)
-	}
-
-	p := parser.CommandsDecorated(
-		BuildCommandDispatcher(init.GetFireBaseSubscriptionsUrl()),
-		parser.ContainsWordDecorated(m,
-			parser.NewExactMatcher(
-				repo.GetExactMatchMap(init.GetFireBaseResponsesUrl()))))
-
-	// SETUP BOT
-	bot, err := tgbotapi.NewBotAPI(init.GetApiToken())
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// BOT CONFIG
-	res, errWebhook := bot.SetWebhook(tgbotapi.NewWebhook(init.GetServerUrl() + bot.Token))
-	if  errWebhook != nil {
-		log.Fatal(errWebhook)
-	}
-	logger.Log("MAIN", res.Description)
-
-	// SETUP INPUT ROUTES
-	port := os.Getenv("PORT")
-	logger.Log("MAIN", "port: "+port)
-	go http.ListenAndServe(":"+port, nil)
-	http.HandleFunc("/notify/", NotifyHandler(init, bot))
-
-	// FETCH MESSAGES
-	updates := bot.ListenForWebhook("/" + bot.Token)
-	for update := range updates {
-		if update.Message == nil {
-			continue
-		}
-		//logger.Log("MAIN", update.Message.Text)
-		ok, text := p.ParseMessage(BuildMessage(update.Message))
-
-		placeholder := "%randomNumber"
-		if strings.Contains(text, placeholder) {
-			rnd := replacer.GetRandomRangeNumberReplacer(1000, placeholder, replacer.GenerateRandomNumeber)
-			text = rnd.ReplaceIn(text)
-		}
-		//if ok {
-		//	logger.Log("MAIN", "Response found"+text)
-		//}else{
-		//	logger.Log("MAIN", "Response not found, message was "+update.Message.Text)
-		//}
-
-		if ok {
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, text)
-			bot.Send(msg)
-		}
-	}
-}
 

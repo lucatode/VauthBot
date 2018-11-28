@@ -97,17 +97,16 @@ func main() {
 	}
 
 	// BOT CONFIG
-	_, err = bot.SetWebhook(tgbotapi.NewWebhook(init.GetServerUrl() + bot.Token))
-	if err != nil {
-		log.Fatal(err)
-
+	res, errWebhook := bot.SetWebhook(tgbotapi.NewWebhook(init.GetServerUrl() + bot.Token))
+	if  errWebhook != nil {
+		log.Fatal(errWebhook)
 	}
+	logger.Log("MAIN", res.Description)
 
 	// SETUP INPUT ROUTES
 	port := os.Getenv("PORT")
 	logger.Log("MAIN", "port: "+port)
 	go http.ListenAndServe(":"+port, nil)
-
 	http.HandleFunc("/notify/", NotifyHandler(init, bot))
 
 	// FETCH MESSAGES

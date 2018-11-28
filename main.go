@@ -50,7 +50,7 @@ func main() {
 	logger.Log("MAIN", "port: "+port)
 	go http.ListenAndServe(":"+port, nil)
 	http.HandleFunc("/notify/", NotifyHandler(init, bot))
-	http.HandleFunc("/restart/", RestartParser(init, p, repo))
+	http.HandleFunc("/restart/", RestartParser(init, p, repo, logger))
 
 	// FETCH MESSAGES
 	updates := bot.ListenForWebhook("/" + bot.Token)
@@ -72,12 +72,14 @@ func main() {
 		}
 	}
 }
-func RestartParser(init initializer.Initializer, p parser.Parser, repo repositories.FireBaseRepository) func(http.ResponseWriter, *http.Request) {
+func RestartParser(init initializer.Initializer, p parser.Parser, repo repositories.FireBaseRepository, logger logger.FirebaseLogger) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		m := repo.GetWordMatchMap(init.GetFireBaseResponsesUrl())
 		p = BuildParser(init, m, repo)
+		logger.Log("RestartParser", "Restarted")
 	}
 }
+
 
 func Init() initializer.Initializer {
 	return initializer.NewInitializer(initializer.NewEnvReader())

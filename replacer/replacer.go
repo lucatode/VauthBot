@@ -18,6 +18,6 @@ type RandomRangeNumberReplacer struct {
 func (rnr RandomRangeNumberReplacer) ReplaceIn(s string) string{
 	s1 := rand.NewSource(time.Now().UnixNano())
 	r1 := rand.New(s1)
-	new := strconv.Itoa(r1.Intn(100000))
+	new := strconv.Itoa(r1.Intn(10000))
 	return strings.Replace(s, rnr.Placeholder, new, -1)
 }

@@ -1,17 +1,17 @@
 package main
 
 import (
-	"condorbot/dispatcher"
-	"condorbot/initializer"
-	"condorbot/subscriber"
+	"vauthbot/dispatcher"
+	"vauthbot/initializer"
+	"vauthbot/subscriber"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
 
-	"condorbot/logger"
-	"condorbot/parser"
-	"condorbot/repositories"
+	"vauthbot/logger"
+	"vauthbot/parser"
+	"vauthbot/repositories"
 	"gopkg.in/telegram-bot-api.v4"
 	"strings"
 	"io/ioutil"
@@ -119,8 +119,10 @@ func main() {
 		//logger.Log("MAIN", update.Message.Text)
 		ok, text := p.ParseMessage(BuildMessage(update.Message))
 
-		if strings.Contains(text, "%randomNumber") {
-			text = replacer.RandomRangeNumberReplacer{"%randomNumber"}.ReplaceIn(text)
+		placeholder := "%randomNumber"
+		if strings.Contains(text, placeholder) {
+			rnd := replacer.RandomRangeNumberReplacer{Placeholder: placeholder}
+			text = rnd.ReplaceIn(text)
 		}
 		//if ok {
 		//	logger.Log("MAIN", "Response found"+text)

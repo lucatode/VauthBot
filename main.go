@@ -16,6 +16,7 @@ import (
 	"strings"
 	"io/ioutil"
 	"encoding/json"
+	"vauthbot/replacer"
 )
 
 func Init() initializer.Initializer {
@@ -117,6 +118,10 @@ func main() {
 		}
 		//logger.Log("MAIN", update.Message.Text)
 		ok, text := p.ParseMessage(BuildMessage(update.Message))
+
+		if strings.Contains(text, "%s") {
+			text = replacer.RandomRangeNumberReplacer{"%s"}.ReplaceIn(text)
+		}
 		//if ok {
 		//	logger.Log("MAIN", "Response found"+text)
 		//}else{

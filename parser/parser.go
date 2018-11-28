@@ -5,13 +5,13 @@ import (
 	"strings"
 )
 
-type Parser interface {
-	ParseMessage(Message) (bool, string)
-}
-
 type Message struct {
 	Text   string
 	ChatId string
+}
+
+type Parser interface {
+	ParseMessage(Message) (bool, string)
 }
 
 type ExactMatcher struct {

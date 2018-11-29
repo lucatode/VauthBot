@@ -19,6 +19,8 @@ import (
 	"vauthbot/replacer"
 )
 
+var p parser.Parser
+
 func main() {
 	//INIT
 	init := Init()
@@ -30,7 +32,7 @@ func main() {
 		logger.Log("MAIN_INIT","request: "+v)
 	}
 
-	p := BuildParser(init, m, repo)
+	p = BuildParser(init, m, repo)
 
 	// SETUP BOT
 	bot, err := tgbotapi.NewBotAPI(init.GetApiToken())

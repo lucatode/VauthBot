@@ -54,8 +54,6 @@ func main() {
 			continue
 		}
 
-		m = repo.GetWordMatchMap(init.GetFireBaseResponsesUrl())
-		p = BuildParser(init, m, repo)
 		ok, text := p.ParseMessage(BuildMessage(update.Message))
 
 		placeholder := "%randomNumber"
@@ -67,6 +65,8 @@ func main() {
 		if ok {
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, text)
 			bot.Send(msg)
+			m = repo.GetWordMatchMap(init.GetFireBaseResponsesUrl())
+			p = BuildParser(init, m, repo)
 		}
 	}
 }

@@ -19,8 +19,6 @@ import (
 	"vauthbot/replacer"
 )
 
-var p parser.Parser
-
 func main() {
 	//INIT
 	init := Init()
@@ -28,11 +26,7 @@ func main() {
 	repo := CreateRepository(logger)
 
 	m := repo.GetWordMatchMap(init.GetFireBaseResponsesUrl())
-	for _, v := range m {
-		logger.Log("MAIN_INIT","request: "+v)
-	}
-
-	p = BuildParser(init, m, repo)
+	p := BuildParser(init, m, repo)
 
 	// SETUP BOT
 	bot, err := tgbotapi.NewBotAPI(init.GetApiToken())
@@ -52,7 +46,6 @@ func main() {
 	logger.Log("MAIN", "port: "+port)
 	go http.ListenAndServe(":"+port, nil)
 	http.HandleFunc("/notify/", NotifyHandler(init, bot))
-	http.HandleFunc("/restart/", RestartParser(init, &p, repo, logger))
 
 	// FETCH MESSAGES
 	updates := bot.ListenForWebhook("/" + bot.Token)
@@ -60,6 +53,9 @@ func main() {
 		if update.Message == nil {
 			continue
 		}
+
+		m = repo.GetWordMatchMap(init.GetFireBaseResponsesUrl())
+		p = BuildParser(init, m, repo)
 		ok, text := p.ParseMessage(BuildMessage(update.Message))
 
 		placeholder := "%randomNumber"

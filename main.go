@@ -92,7 +92,7 @@ func BuildCommandDispatcher(url string) dispatcher.Dispatcher {
 func BuildParser(init initializer.Initializer, m map[string]string, repo repositories.FireBaseRepository) parser.Parser {
 	return parser.CommandsDecorated(
 		BuildCommandDispatcher(init.GetFireBaseSubscriptionsUrl()),
-		parser.ContainsWordDecorated(m,
+		parser.ContainsStringDecorated(m,
 			parser.NewExactMatcher(
 				repo.GetExactMatchMap(init.GetFireBaseResponsesUrl()))))
 }

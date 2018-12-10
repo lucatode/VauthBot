@@ -76,23 +76,23 @@ func TestCheckStringMatch(t *testing.T) {
 }
 
 func TestContainsWordMatch(t *testing.T) {
-	matchOutput, stringOutput := NewContainsWordMatcher(MockWordMatcherDictionary()).ParseMessage(B.WithText("ab ba abab").Build())
+	matchOutput, stringOutput := NewContainsStringMatcher(MockWordMatcherDictionary()).ParseMessage(B.WithText("ab ba abab").Build())
 	assert.Equal(t, "Found ab ba", stringOutput, "")
 	assert.Equal(t, matchOutput, true, "")
 
-	matchOutput, stringOutput = NewContainsWordMatcher(MockWordMatcherDictionary()).ParseMessage(B.WithText("abba abab ababa").Build())
+	matchOutput, stringOutput = NewContainsStringMatcher(MockWordMatcherDictionary()).ParseMessage(B.WithText("abba abab ababa").Build())
 	assert.Equal(t, "Found abba", stringOutput, "")
 	assert.Equal(t, matchOutput, true, "")
 
-	matchOutput, stringOutput = NewContainsWordMatcher(MockWordMatcherDictionary()).ParseMessage(B.WithText("aaaa bccb").Build())
+	matchOutput, stringOutput = NewContainsStringMatcher(MockWordMatcherDictionary()).ParseMessage(B.WithText("aaaa bccb").Build())
 	assert.Equal(t, "Found bccb", stringOutput, "")
 	assert.Equal(t, matchOutput, true, "")
 
-	matchOutput, stringOutput = NewContainsWordMatcher(MockWordMatcherDictionary()).ParseMessage(B.WithText("cddc").Build())
+	matchOutput, stringOutput = NewContainsStringMatcher(MockWordMatcherDictionary()).ParseMessage(B.WithText("cddc").Build())
 	assert.Equal(t, "Found cddc", stringOutput, "")
 	assert.Equal(t, matchOutput, true, "")
 
-	matchOutput, stringOutput = NewContainsWordMatcher(MockWordMatcherDictionary()).ParseMessage(B.WithText("cccc").Build())
+	matchOutput, stringOutput = NewContainsStringMatcher(MockWordMatcherDictionary()).ParseMessage(B.WithText("cccc").Build())
 	assert.Equal(t, "", stringOutput, "")
 	assert.Equal(t, matchOutput, false, "")
 }
@@ -108,7 +108,7 @@ func TestExactIgnoreCase(t *testing.T){
 
 func TestExactMatchDecorated(t *testing.T) {
 
-	matcher := ContainsWordDecorated(
+	matcher := ContainsStringDecorated(
 		MockWordMatcherDictionary(),
 		NewExactMatcher(MockExactMatchDictionary()),
 	)
@@ -116,7 +116,7 @@ func TestExactMatchDecorated(t *testing.T) {
 	assert.Equal(t, "Found bccb", stringOutput, "")
 	assert.Equal(t, matchOutput, true, "")
 
-	matchOutput, stringOutput = ContainsWordDecorated(
+	matchOutput, stringOutput = ContainsStringDecorated(
 		MockWordMatcherDictionary(),
 		NewExactMatcher(MockExactMatchDictionary())).ParseMessage(B.WithText("notify").Build())
 	assert.Equal(t, "notified", stringOutput, "")
@@ -125,7 +125,7 @@ func TestExactMatchDecorated(t *testing.T) {
 
 func TestWithAllDecorations(t *testing.T) {
 
-	matcher := CommandsDecorated(MockDispatcher(),ContainsWordDecorated(
+	matcher := CommandsDecorated(MockDispatcher(), ContainsStringDecorated(
 		MockWordMatcherDictionary(),
 		NewExactMatcher(MockExactMatchDictionary()),
 	))

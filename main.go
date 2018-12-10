@@ -70,15 +70,6 @@ func main() {
 		}
 	}
 }
-func RestartParser(init initializer.Initializer, p *parser.Parser, repo repositories.FireBaseRepository, logger logger.FirebaseLogger) func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		m := repo.GetWordMatchMap(init.GetFireBaseResponsesUrl())
-		newParser := BuildParser(init, m, repo)
-		p = &newParser
-		logger.Log("RestartParser", "Restarted")
-	}
-}
-
 
 func Init() initializer.Initializer {
 	return initializer.NewInitializer(initializer.NewEnvReader())

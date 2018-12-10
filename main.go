@@ -63,6 +63,7 @@ func main() {
 		}
 
 		if ok {
+			logger.Log("Match hit", text)
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, text)
 			bot.Send(msg)
 			m = repo.GetWordMatchMap(init.GetFireBaseResponsesUrl())

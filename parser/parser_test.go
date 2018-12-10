@@ -97,6 +97,15 @@ func TestContainsWordMatch(t *testing.T) {
 	assert.Equal(t, matchOutput, false, "")
 }
 
+func TestExactIgnoreCase(t *testing.T){
+
+	parser := NewExactIgnoreCaseMatcher(MockExactMatchDictionary())
+	ok, val := parser.ParseMessage(B.WithText("Notify").Build())
+
+	assert.Equal(t, true, ok, "")
+	assert.Equal(t, "notified", val, "")
+}
+
 func TestExactMatchDecorated(t *testing.T) {
 
 	matcher := ContainsWordDecorated(

@@ -27,6 +27,21 @@ func NewExactMatcher(dict map[string]string) Parser {
 	return ExactMatcher{dict}
 }
 
+type ExactIgnoreCaseMatcher struct {
+	dictionary map[string]string
+}
+
+func (em ExactIgnoreCaseMatcher) ParseMessage(message Message) (bool, string) {
+	lower := strings.ToLower(message.Text)
+	val, ok := em.dictionary[lower]
+	return ok, val
+}
+
+func NewExactIgnoreCaseMatcher (dict map[string]string)Parser {
+	return ExactIgnoreCaseMatcher{dict}
+}
+
+
 type ContainsWordMatcher struct {
 	delegate         func(Message) (bool, string)
 	containsWordDict map[string]string

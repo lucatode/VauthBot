@@ -38,6 +38,22 @@ func MockDispatcher() dispatcher.Dispatcher {
 
 var B = NewMessageBuilder()
 
+////////////////////////////////////////
+
+func TestExactIgnoreCase(t *testing.T){
+
+	parser := NewExactIgnoreCaseMatcher(MockExactMatchDictionary())
+	ok, val := parser.ParseMessage(B.WithText("Notify").Build())
+
+	assert.Equal(t, true, ok, "")
+	assert.Equal(t, "notified", val, "")
+
+	ok, val = parser.ParseMessage(B.WithText("NotIFy").Build())
+
+	assert.Equal(t, true, ok, "")
+	assert.Equal(t, "notified", val, "")
+}
+
 ////////////////////////
 func TestExactMatchDecoratedWithCommand(t *testing.T) {
 
@@ -95,15 +111,6 @@ func TestContainsWordMatch(t *testing.T) {
 	matchOutput, stringOutput = NewContainsStringMatcher(MockWordMatcherDictionary()).ParseMessage(B.WithText("cccc").Build())
 	assert.Equal(t, "", stringOutput, "")
 	assert.Equal(t, matchOutput, false, "")
-}
-
-func TestExactIgnoreCase(t *testing.T){
-
-	parser := NewExactIgnoreCaseMatcher(MockExactMatchDictionary())
-	ok, val := parser.ParseMessage(B.WithText("Notify").Build())
-
-	assert.Equal(t, true, ok, "")
-	assert.Equal(t, "notified", val, "")
 }
 
 func TestExactMatchDecorated(t *testing.T) {

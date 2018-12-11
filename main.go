@@ -23,10 +23,9 @@ func main() {
 	//INIT
 	init := Init()
 	logger := CreateLogger(init)
-	repo := CreateRepository(logger)
 
-	m := repo.GetWordMatchMap(init.GetFireBaseResponsesUrl())
-	p := BuildParser(init, m, repo)
+	m := repositories.BuildDictionaries(init.GetFireBaseResponsesUrl(), logger)
+	p := BuildParser(init, m)
 
 	// SETUP BOT
 	bot, err := tgbotapi.NewBotAPI(init.GetApiToken())
@@ -66,8 +65,8 @@ func main() {
 			logger.Log("Match hit", text)
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, text)
 			bot.Send(msg)
-			m = repo.GetWordMatchMap(init.GetFireBaseResponsesUrl())
-			p = BuildParser(init, m, repo)
+			m := repositories.BuildDictionaries(init.GetFireBaseResponsesUrl(), logger)
+			p = BuildParser(init, m)
 		}
 	}
 }
@@ -82,7 +81,7 @@ func CreateLogger(init initializer.Initializer) logger.FirebaseLogger {
 }
 func CreateRepository(logger logger.FirebaseLogger) repositories.FireBaseRepository {
 	client := http.Client{}
-	return repositories.FireBaseRepository{client.Get, logger}
+	return repositories.FireBaseRepository{client.Get, logger, repositories.GetMatchCases }
 }
 
 func BuildCommandDispatcher(url string) dispatcher.Dispatcher {
@@ -90,12 +89,11 @@ func BuildCommandDispatcher(url string) dispatcher.Dispatcher {
 		"#subscribe": func(split []string, chatId string) string { return subscriber.AddSubscription(url, split, chatId) },
 	}}
 }
-func BuildParser(init initializer.Initializer, m map[string]string, repo repositories.FireBaseRepository) parser.Parser {
+func BuildParser(init initializer.Initializer, m repositories.MatchDictionaries) parser.Parser {
 	return parser.CommandsDecorated(
 		BuildCommandDispatcher(init.GetFireBaseSubscriptionsUrl()),
-		parser.ContainsStringDecorated(m,
-			parser.NewExactMatcher(
-				repo.GetExactMatchMap(init.GetFireBaseResponsesUrl()))))
+		parser.ContainsStringDecorated(m.StringMatch,
+			parser.NewExactMatcher(m.ExactMatch)))
 }
 
 func BuildMessage(message *tgbotapi.Message) parser.Message {

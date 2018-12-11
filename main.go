@@ -92,9 +92,9 @@ func BuildCommandDispatcher(url string) dispatcher.Dispatcher {
 func BuildParser(init initializer.Initializer, m repositories.MatchDictionaries) parser.Parser {
 	return parser.CommandsDecorated(
 		BuildCommandDispatcher(init.GetFireBaseSubscriptionsUrl()),
-		parser.ContainsStringDecorated(m.StringMatch,
+		parser.ContainsStringDecorated(m.StringMatch, parser.ContainsIgnoreCaseMatcherDecorated(m.StringMatchIgnoreCase,
 			parser.ExactIgnoreCaseMatcherDecorated(m.ExactMatchIgnoreCase,
-			parser.NewExactMatcher(m.ExactMatch))))
+			parser.NewExactMatcher(m.ExactMatch)))))
 }
 
 func BuildMessage(message *tgbotapi.Message) parser.Message {

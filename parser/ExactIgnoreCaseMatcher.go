@@ -14,7 +14,7 @@ func (em ExactIgnoreCaseMatcher) ParseMessage(message Message) (bool, string) {
 }
 
 func NewExactIgnoreCaseMatcher(dict map[string]string) Parser {
-	return ExactIgnoreCaseMatcher{dict, nil}
+	return ExactIgnoreCaseMatcher{ nil, dict}
 }
 
 func ExactIgnoreCaseMatcherDecorated(dict map[string]string, matcher Parser) Parser {

@@ -93,7 +93,8 @@ func BuildParser(init initializer.Initializer, m repositories.MatchDictionaries)
 	return parser.CommandsDecorated(
 		BuildCommandDispatcher(init.GetFireBaseSubscriptionsUrl()),
 		parser.ContainsStringDecorated(m.StringMatch,
-			parser.NewExactMatcher(m.ExactMatch)))
+			parser.ExactIgnoreCaseMatcherDecorated(m.ExactMatchIgnoreCase,
+			parser.NewExactMatcher(m.ExactMatch))))
 }
 
 func BuildMessage(message *tgbotapi.Message) parser.Message {

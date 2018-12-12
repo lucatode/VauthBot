@@ -8,7 +8,7 @@ type ContainsIgnoreCaseMatcher struct {
 }
 
 func (cwm ContainsIgnoreCaseMatcher) ParseMessage(message Message) (bool, string) {
-	inputString := message.Text
+	inputString := strings.ToLower(message.Text)
 	for k, v := range cwm.dictionary {
 		if strings.Contains(inputString, k) {
 			return true, v

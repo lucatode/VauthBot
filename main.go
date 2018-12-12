@@ -25,18 +25,6 @@ func main() {
 	logger := CreateLogger(init)
 
 	m := repositories.BuildDictionaries(init.GetFireBaseResponsesUrl(), logger)
-	for _, v := range m.ExactMatch {
-		logger.Log("ExactMatch", v)
-	}
-	for _, v := range m.ExactMatchIgnoreCase {
-		logger.Log("ExactMatchIgnoreCase", v)
-	}
-	for _, v := range m.StringMatch {
-		logger.Log("StringMatch", v)
-	}
-	for _, v := range m.StringMatchIgnoreCase {
-		logger.Log("StringMatchIgnoreCase", v)
-	}
 	p := BuildParser(init, m)
 
 	// SETUP BOT
@@ -65,9 +53,8 @@ func main() {
 			continue
 		}
 
-		logger.Log("TextInput", update.Message.Text)
 		ok, text := p.ParseMessage(BuildMessage(update.Message))
-		logger.Log("TextOutput", text)
+
 		placeholder := "%randomNumber"
 		if strings.Contains(text, placeholder) {
 			rnd := replacer.GetRandomRangeNumberReplacer(1000, placeholder, replacer.GenerateRandomNumeber)
@@ -75,7 +62,7 @@ func main() {
 		}
 
 		if ok {
-			logger.Log("Match hit", text)
+			logger.Log("Match hit", update.Message.Text)
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, text)
 			bot.Send(msg)
 			m := repositories.BuildDictionaries(init.GetFireBaseResponsesUrl(), logger)

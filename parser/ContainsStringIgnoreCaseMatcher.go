@@ -7,10 +7,14 @@ type ContainsIgnoreCaseMatcher struct {
 	dictionary map[string]string
 }
 
-func (em ContainsIgnoreCaseMatcher) ParseMessage(message Message) (bool, string) {
-	lower := strings.ToLower(message.Text)
-	val, ok := em.dictionary[lower]
-	return ok, val
+func (cwm ContainsIgnoreCaseMatcher) ParseMessage(message Message) (bool, string) {
+	inputString := message.Text
+	for k, v := range cwm.dictionary {
+		if strings.Contains(inputString, k) {
+			return true, v
+		}
+	}
+	return cwm.delegate(message)
 }
 
 func NewContainsIgnoreCaseMatcher(dict map[string]string) Parser {

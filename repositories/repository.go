@@ -107,12 +107,7 @@ func WordMatchCasesIgnoreCaseToMap(matchCases []MatchCase) map[string]string {
 func BuildDictionaries(url string, logger logger.Logger) MatchDictionaries {
 	client := http.Client{}
 	repo := FireBaseRepository{client.Get, logger, func(repo FireBaseRepository, url string) []MatchCase {
-		return []MatchCase{
-			{true, "abc", "def", false},
-			{true, "ABC", "DEF", true},
-			{false, "A B C", "OoOoOoO", false},
-			{false, "j k l", "zzzzZZZZzzz", true},
-		}
+		return GetMatchCases(repo, url)
 	}}
 	return MatchDictionaries{
 		repo.FilterMatchCases(url, ExactMatchCasesToMap),

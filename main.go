@@ -79,10 +79,6 @@ func CreateLogger(init initializer.Initializer) logger.FirebaseLogger {
 	logger.Log("MAIN", "Starting")
 	return logger
 }
-func CreateRepository(logger logger.FirebaseLogger) repositories.FireBaseRepository {
-	client := http.Client{}
-	return repositories.FireBaseRepository{client.Get, logger, repositories.GetMatchCases }
-}
 
 func BuildCommandDispatcher(url string) dispatcher.Dispatcher {
 	return dispatcher.CommandDispatcher{map[string]func([]string, string) string{
@@ -92,7 +88,8 @@ func BuildCommandDispatcher(url string) dispatcher.Dispatcher {
 func BuildParser(init initializer.Initializer, m repositories.MatchDictionaries) parser.Parser {
 	return parser.CommandsDecorated(
 		BuildCommandDispatcher(init.GetFireBaseSubscriptionsUrl()),
-		parser.ContainsStringDecorated(m.StringMatch, parser.ContainsIgnoreCaseMatcherDecorated(m.StringMatchIgnoreCase,
+			parser.ContainsStringDecorated(m.StringMatch,
+			parser.ContainsIgnoreCaseMatcherDecorated(m.StringMatchIgnoreCase,
 			parser.ExactIgnoreCaseMatcherDecorated(m.ExactMatchIgnoreCase,
 			parser.NewExactMatcher(m.ExactMatch)))))
 }

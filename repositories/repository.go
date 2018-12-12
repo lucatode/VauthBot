@@ -98,7 +98,7 @@ func WordMatchCasesIgnoreCaseToMap(matchCases []MatchCase) map[string]string {
 	dict := make(map[string]string)
 	for _, matchCase := range matchCases {
 		if !matchCase.MatchExact && matchCase.IgnoreCase{
-			dict[matchCase.Request] = matchCase.Response
+			dict[strings.ToLower(matchCase.Request)] = matchCase.Response
 		}
 	}
 	return dict
